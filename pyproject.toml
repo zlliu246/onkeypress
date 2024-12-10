@@ -1,0 +1,26 @@
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "onkeypress"
+version = "0.0.1"
+authors = [
+    { name="Liu Zuo Lin", email="zlliu246@gmail.com" },
+]
+description = "A simple program that allows users to make their terminal reactive to keypresses"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+
+]
+
+[project.urls]
+Homepage = "https://github.com/zlliu246/onkeypress"
+Issues = "https://github.com/zlliu246/onkeypress/issues"
