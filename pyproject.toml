@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "onkeypress"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
     { name="Liu Zuo Lin", email="zlliu246@gmail.com" },
 ]
@@ -18,7 +18,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-
+    "toggle_cbreak"
 ]
 
 [project.urls]
