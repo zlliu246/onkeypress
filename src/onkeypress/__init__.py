@@ -11,7 +11,7 @@ def onkeypress(key: Key | str):
 
 @handle_cbreak_and_exceptions
 def while_not_exit(
-    *keypressinfo_sequence: Sequence[KeyPressInfo],
+    *keypressinfos: Sequence[KeyPressInfo],
     exit_key: Key = Key.ENTER,
     exit_message: str = "",
 ) -> Key:
@@ -25,8 +25,9 @@ def while_not_exit(
         exit_key (Key): If user presses this key, this function exits.
         exit_message (str): prints when user exits
     """
+
     esc_char_to_keypressinfo_map: dict[str, KeyPressInfo] = {
-        kpi.key_str_value :kpi for kpi in keypressinfo_sequence
+        kpi._key_str: kpi for kpi in keypressinfos
     }
 
     # using 3 as escape characters are usually 1-3 characteres long
@@ -39,13 +40,17 @@ def while_not_exit(
         # first check for last3chars (usually escape characters)
         if last3chars in esc_char_to_keypressinfo_map:
             kpi: KeyPressInfo = esc_char_to_keypressinfo_map[last3chars]
-            kpi.actually_invoke()
+            kpi.invoke()
 
         # then check for single chars (escape chars take precedence)
         elif input_char in esc_char_to_keypressinfo_map:
             kpi: KeyPressInfo = esc_char_to_keypressinfo_map[input_char]
-            kpi.actually_invoke()
+            kpi.invoke()
 
+        elif "ALL_OTHERS" in esc_char_to_keypressinfo_map:
+            kpi: KeyPressInfo = esc_char_to_keypressinfo_map["ALL_OTHERS"]
+            kpi.invoke(char=input_char)
+            
         # check for exit condition
         exit_key_length = len(exit_key.value)
         if last3chars[-exit_key_length:] == exit_key.value:

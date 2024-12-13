@@ -1,12 +1,13 @@
 from src.onkeypress import while_not_exit, onkeypress, Key
 
-def func(*args, **kwargs):
-    print(f"{args=} {kwargs=}")
+def print_up():
+    print("up is pressed")
+
+def print_down():
+    print("down is pressed")
 
 while_not_exit(
-    onkeypress(Key.UP).invoke(func, ["up"]),
-    onkeypress(Key.DOWN).invoke(func, ["down"]),
-    onkeypress("a").invoke(func, ["a!!"]),
-    onkeypress("s").invoke(func, ["s!!"]),
+    onkeypress(Key.UP).call(print_up),
+    onkeypress(Key.DOWN).call(print_down),
     exit_key=Key.ENTER,
 )

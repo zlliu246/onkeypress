@@ -2,12 +2,22 @@ from enum import Enum
 from typing import Any, Callable, Sequence, Mapping, Self, Optional
 
 class Key(Enum):
+    ALL_OTHERS = "ALL_OTHERS"
     ESCAPE = "\x1b"
+    BACKSPACE = "\x7f"
+
     ENTER = "\n"
     UP = "\x1b[A"
     DOWN = "\x1b[B"
     LEFT = "\x1b[D"
     RIGHT = "\x1b[C"
+
+    CONTROL_Z = "\x19"
+    CONTROL_X = "\x18"
+    CONTROL_C = "\x17"
+    CONTROL_V = "\x16"
+    CONTROL_B = "\x02"
+
     # TODO: add more
 
 class KeyPressInfo:
@@ -17,46 +27,48 @@ class KeyPressInfo:
     ) -> None:
         """initializes a KeyPressInfo object"""
 
-        self.key_str_value: str
-        self.function: Callable
-        self.args: Sequence[Any]
-        self.kwargs: dict[str, Any]
-
         if isinstance(user_input_key, Key):
-            self.key_str_value = user_input_key.value
+            self._key_str: str = user_input_key.value
         elif isinstance(user_input_key, str):
-            self.key_str_value = user_input_key
+            self._key_str: str = user_input_key
         else:
             raise ValueError(f"Invalid key {user_input_key}. Should be either Key or string")
 
-        self.function = lambda : None
-        self.args = None
-        self.kwargs = None
+        self._func = lambda : None
+        self._args = ()
+        self._kwargs = {}
 
-    def invoke(
+    def call(
         self,
-        function: Callable,
-        args: Optional[Sequence[Any]] = None,
-        kwargs: Optional[Mapping[str, Any]] = None,
+        func: Callable,
     ) -> Self:
-        """
-        Declares that a certain keypress invokes a certain function with *args & **kwargs
-
-        Note - this doesn't actually invoke any functions
-
-        Args:
-            function (Callable): function that user wishes to invoke
-            args (Sequence[Any]): args passed as *args into function
-            kwargs (Mapping[Any]): kwargs passed as **kwargs into function
-        """
-        self.function = function
-        self.args = args or []
-        self.kwargs = kwargs or {}
-
+        """Initializes self._func - when self._key_str is pressed, self._func is called"""
+        self._func = func
         return self
     
-    def actually_invoke(self) -> Any:
+    def args(self, *args: Any) -> Self:
+        """Initializes self._args - self._func is called using self._func(*self._args, **self._kwargs)"""
+        self._args = args or []
+        return self
+    
+    def kwargs(self, **kwargs: Any) -> Self:
+        """Initializes self._kwargs - self._func is called using self._func(*self._args, **self._kwargs)"""
+        self._kwargs = kwargs or {}
+        return self
+    
+    def invoke(self, char: Optional[str] = None) -> Any:
         """
-        Actually invoke self.function with *args and **kwargs
+        Actually call self._func(*self._args, **self._kwargs)
+
+        Args:
+            char (Optional[str]): character to pass in (usually used with Key.ALL_OTHERS)
         """
-        return self.function(*self.args, **self.kwargs)
+        if char is not None:
+            # char is passed as first arg to self._func
+            output: Any = self._func(char, *self._args, **self._kwargs)
+            print(end="", flush=True)
+            return output
+
+        output: Any = self._func(*self._args, **self._kwargs)
+        print(end="", flush=True)
+        return output
