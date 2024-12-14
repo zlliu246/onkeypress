@@ -1,4 +1,4 @@
-from src.onkeypress import while_not_exit, onkeypress, Key
+from onkeypress import while_not_exit, onkeypress, Key
 
 def print_up():
     print("up is pressed")

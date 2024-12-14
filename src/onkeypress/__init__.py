@@ -4,7 +4,7 @@ from typing import Sequence
 
 from .classes import Key, KeyPressInfo
 from .decorators import handle_cbreak_and_exceptions
-
+from .helpers import get_input_char
 
 def onkeypress(key: Key | str):
     return KeyPressInfo(key)
@@ -34,12 +34,17 @@ def while_not_exit(
     last3chars: str = "___"
 
     while True:
-        input_char: str = sys.stdin.read(1)
+        input_char: str = get_input_char()
         last3chars: str = last3chars[1:] + input_char
 
-        # first check for last3chars (usually escape characters)
+        # first check for last 3 chars (usually escape characters)
         if last3chars in esc_char_to_keypressinfo_map:
             kpi: KeyPressInfo = esc_char_to_keypressinfo_map[last3chars]
+            kpi.invoke()
+
+        # then check for last 2 chars (Windows escape characters are like these)
+        elif last3chars[-2:] in esc_char_to_keypressinfo_map:
+            kpi: KeyPressInfo = esc_char_to_keypressinfo_map[last3chars[-2:]]
             kpi.invoke()
 
         # then check for single chars (escape chars take precedence)

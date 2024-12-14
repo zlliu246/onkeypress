@@ -1,24 +1,25 @@
 from enum import Enum
 from typing import Any, Callable, Sequence, Mapping, Self, Optional
 
+import platform
+WINDOWS = platform.system() in ["Windows", "CYGWIN"]
+
 class Key(Enum):
     ALL_OTHERS = "ALL_OTHERS"
     ESCAPE = "\x1b"
-    BACKSPACE = "\x7f"
+    BACKSPACE = "\x7f" if not WINDOWS else "\x08"
 
-    ENTER = "\n"
-    UP = "\x1b[A"
-    DOWN = "\x1b[B"
-    LEFT = "\x1b[D"
-    RIGHT = "\x1b[C"
+    ENTER = "\n" if not WINDOWS else "\r"
+    UP = "\x1b[A" if not WINDOWS else "\xe0H"
+    DOWN = "\x1b[B" if not WINDOWS else "\xe0P"
+    LEFT = "\x1b[D" if not WINDOWS else "\xe0K"
+    RIGHT = "\x1b[C" if not WINDOWS else "\xe0M"
 
-    CONTROL_Z = "\x19"
-    CONTROL_X = "\x18"
-    CONTROL_C = "\x17"
-    CONTROL_V = "\x16"
-    CONTROL_B = "\x02"
-
-    # TODO: add more
+    CONTROL_Z = "\x19" if not WINDOWS else "\x1a"
+    CONTROL_X = "\x18" if not WINDOWS else "\x18"
+    CONTROL_C = "\x17" if not WINDOWS else "\x03"
+    CONTROL_V = "\x16" # overridden by paste in Windows (lol)
+    CONTROL_B = "\x02" if not WINDOWS else "\x02"
 
 class KeyPressInfo:
     def __init__(
