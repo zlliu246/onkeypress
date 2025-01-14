@@ -1,3 +1,4 @@
+import sys
 import platform
 
 WINDOWS = platform.system() in ["Windows", "CYGWIN"]
